@@ -747,3 +747,36 @@ figure[data-grapher-src]:empty:after {
 .chart.export {
     padding: 0 !important;
 }
+
+.chart .addEntityButton {
+    .icon {
+        stroke-width: 2px;
+        stroke: rgba(0,0,0,.2);
+        transition: stroke 1s ease;
+    }
+    .label {
+        fill: rgba(0,0,0,.3);
+        transition: fill 1s ease;
+    }
+    .background {
+        fill: transparent;
+        transition: stroke 1s ease;
+        stroke-width: 2px;
+        stroke: transparent;
+    }
+}
+
+.chart:hover .addEntityButton {
+    .icon {
+        stroke: #3F9EFF;
+        transition: stroke 250ms ease;
+    }
+    .label {
+        fill: #3F9EFF;
+        transition: fill 250ms ease;
+    }
+    .background {
+        stroke: #3F9EFF;
+        transition: stroke 250ms ease;
+    }
+}

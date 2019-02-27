@@ -53,7 +53,7 @@ export class Bounds {
         return new Bounds(0, 0, 0, 0)
     }
 
-    static forText(str: string, { x = 0, y = 0, fontSize = 16 }: { x?: number, y?: number, fontSize?: number, fontFamily?: string } = {}): Bounds {
+    static forText(str: string, { x = 0, y = 0, fontSize = 16, fontWeight = 400 }: { x?: number, y?: number, fontSize?: number, fontFamily?: string, fontWeight?: number } = {}): Bounds {
         const key = `${str}-${fontSize}`
         let bounds = this.textBoundsCache[key]
         if (bounds) {
@@ -66,7 +66,7 @@ export class Bounds {
         if (str === "")
             bounds = Bounds.empty()
         else {
-            const width = pixelWidth(str, { font: "Arial", size: fontSize })
+            const width = pixelWidth(str, { font: "Arial", size: fontSize, bold: fontWeight > 400 })
             const height = fontSize
             bounds = new Bounds(x, y - height, width, height)
         }
@@ -173,6 +173,14 @@ export class Bounds {
 
     extend(props: { x?: number, y?: number, width?: number, height?: number }): Bounds {
         return Bounds.fromProps(extend({}, this, props))
+    }
+
+    expand(amount: number): Bounds {
+        return new Bounds(this.x - amount, this.y - amount, this.width + 2 * amount, this.height + 2 * amount)
+    }
+
+    expandLeft(amount: number): Bounds {
+        return new Bounds(this.x - amount, this.y, this.width + amount, this.height)
     }
 
     scale(scale: number): Bounds {

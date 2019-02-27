@@ -11,6 +11,7 @@ import { observer } from 'mobx-react'
 import { TextWrap } from './TextWrap'
 import { AxisScale } from './AxisScale'
 import { Bounds } from './Bounds'
+import { ChartViewContext, ChartViewContextType } from './ChartViewContext'
 
 export interface HeightedLegendProps {
     items: HeightedLegendItem[],
@@ -113,6 +114,10 @@ class PlacedMarkView extends React.Component<{ mark: PlacedMark, legend: Heighte
 
 @observer
 export class HeightedLegendView extends React.Component<HeightedLegendViewProps> {
+
+    static contextType = ChartViewContext
+    context!: ChartViewContextType
+
     @computed get onMouseOver(): any { return defaultTo(this.props.onMouseOver, noop) }
     @computed get onMouseLeave(): any { return defaultTo(this.props.onMouseLeave, noop) }
     @computed get onClick(): any { return defaultTo(this.props.onClick, noop) }
@@ -319,9 +324,22 @@ export class HeightedLegendView extends React.Component<HeightedLegendViewProps>
     }
 
     render() {
+        const fontSize = this.props.legend.fontSize * 1.0833
+        const fontWeight = 700
+        const iconSize = fontSize * 0.75
+        const addButtonText = `Add ${this.context.chartView.controls.addDataTerm}`
+        const addButtonTextBounds = Bounds.forText(addButtonText, { fontSize, fontWeight })
+        const addButtonRectBounds = addButtonTextBounds.expand(3).expandLeft(17)
+        const buttonHeight = addButtonRectBounds.height
+
         return <g className="HeightedLegend clickable" onMouseLeave={() => this.onMouseLeave()}>
             {this.renderBackground()}
             {this.renderFocus()}
+            {!this.context.isStatic && <g transform={`translate(${this.props.x + (this.needsLines ? this.props.legend.leftPadding : 5+23)}, 0)`} className="addEntityButton">
+                <rect x={addButtonRectBounds.x} y={0} width={addButtonRectBounds.width} height={buttonHeight} className="background" />
+                <path d={`M-${iconSize+5},${buttonHeight/2} h${iconSize} m-${iconSize/2},-${iconSize/2} v${iconSize}`} className="icon" />
+                <text y={buttonHeight/2} dy=".1em" fontSize={fontSize} fontWeight={fontWeight} alignmentBaseline="middle" className="label">{addButtonText}</text>
+            </g>}
         </g>
     }
 }
